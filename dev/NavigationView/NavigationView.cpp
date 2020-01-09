@@ -1826,7 +1826,7 @@ bool NavigationView::FocusNextFocusableElement(const winrt::ItemsRepeater& ir, c
         {
             if (auto const nextElement = ir.TryGetElement(i).try_as<winrt::NavigationViewItem>())
             {
-                SetFocus(nextElement, winrt::FocusState::Programmatic);
+                SetFocus(nextElement, winrt::FocusState::Keyboard);
                 return true;
             }
         }
@@ -1842,8 +1842,7 @@ bool NavigationView::FocusPreviousFocusableElement(const winrt::ItemsRepeater& i
         {
             if (auto const nextElement = ir.TryGetElement(i).try_as<winrt::NavigationViewItem>())
             {
-                SetFocus(nextElement, winrt::FocusState::Programmatic);
-                // TODO: Figure out how to scroll to newly focused item
+                SetFocus(nextElement, winrt::FocusState::Keyboard);
                 return true;
             }
         }
