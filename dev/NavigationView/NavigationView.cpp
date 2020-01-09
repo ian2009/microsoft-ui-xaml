@@ -1779,10 +1779,29 @@ void NavigationView::OnNavigationViewItemKeyDown(const winrt::IInspectable& send
     }
 }
 
+void NavigationView::ArrowKeyNavigationPolyfill(const winrt::NavigationViewItem& nvi, const winrt::KeyRoutedEventArgs& args)
+{
+    switch (args.Key())
+    {
+    case winrt::VirtualKey::Down:
+        args.Handled(true);
+        break;
+    case winrt::VirtualKey::Up:
+        args.Handled(true);
+        break;
+    }
+}
+
 void NavigationView::HandleKeyEventForNavigationViewItem(const winrt::NavigationViewItem& nvi, const winrt::KeyRoutedEventArgs& args)
 {
     auto key = args.Key();
-    if (IsSettingsItem(nvi))
+
+    // Need to Polyfill XY navigation behavior when running RS3 and below
+    if (!SharedHelpers::IsRS4OrHigher())
+    {
+        ArrowKeyNavigationPolyfill(nvi, args);
+    }
+    else if (IsSettingsItem(nvi))
     {
         // Because ListViewItem eats the events, we only get these keys on KeyDown.
         if (key == winrt::VirtualKey::Space ||

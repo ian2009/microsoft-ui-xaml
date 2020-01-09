@@ -114,6 +114,7 @@ private:
     void RaiseItemInvokedForNavigationViewItem(const winrt::NavigationViewItem& nvi);
     bool IsSettingsItem(winrt::IInspectable const& item);
     void HandleKeyEventForNavigationViewItem(const winrt::NavigationViewItem& nvi, const winrt::KeyRoutedEventArgs& args);
+    void ArrowKeyNavigationPolyfill(const winrt::NavigationViewItem& nvi, const winrt::KeyRoutedEventArgs& args);
 
     // This property is attached to the NavigationViewItems that are being
     // displayed by the repeaters in this control. It is used to keep track of the
