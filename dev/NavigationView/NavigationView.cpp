@@ -1913,7 +1913,7 @@ void NavigationView::KeyboardFocusFirstItemFromItem(const winrt::NavigationViewI
 
     if (auto controlFirst = firstElement.try_as<winrt::Control>())
     {
-        controlFirst.Focus(winrt::FocusState::Keyboard);
+        SetFocus(controlFirst, winrt::FocusState::Keyboard);
     }
 }
 
@@ -1943,8 +1943,7 @@ void NavigationView::KeyboardFocusLastItemFromItem(const winrt::NavigationViewIt
         auto lastIndex = itemsSourceView.Count() - 1;
         if (auto lastElement = ir.TryGetElement(lastIndex))
         {
-            SetFocus(lastElement, winrt::FocusState::Programmatic);
-            //controlLast.Focus(winrt::FocusState::Programmatic);
+            SetFocus(lastElement, winrt::FocusState::Keyboard);
         }
     }
 }
