@@ -1784,24 +1784,86 @@ void NavigationView::ArrowKeyNavigationPolyfill(const winrt::NavigationViewItem&
     switch (args.Key())
     {
     case winrt::VirtualKey::Down:
-        args.Handled(true);
+        if (auto const ir = GetParentItemsRepeaterForContainer(nvi))
+        {
+            if (ir != m_topNavRepeater.get())
+            {
+                auto const indexOfCurrentElement = GetIndexFromItem(ir, nvi);
+                if (indexOfCurrentElement >= 0)
+                {
+                    if (FocusNextFocusableElement(ir, indexOfCurrentElement))
+                    {
+                        args.Handled(true);
+                    }
+                }
+            }
+        }
         break;
     case winrt::VirtualKey::Up:
-        args.Handled(true);
+        if (auto const ir = GetParentItemsRepeaterForContainer(nvi))
+        {
+            if (ir != m_topNavRepeater.get())
+            {
+                auto const indexOfCurrentElement = GetIndexFromItem(ir, nvi);
+                if (indexOfCurrentElement >= 0)
+                {
+                    if (FocusPreviousFocusableElement(ir, indexOfCurrentElement))
+                    {
+                        args.Handled(true);
+                    }
+                }
+            }
+        }
         break;
     }
+}
+
+bool NavigationView::FocusNextFocusableElement(const winrt::ItemsRepeater& ir, const int elementIndex)
+{
+    if (auto itemsSourceView = ir.ItemsSourceView())
+    {
+        for (int i = elementIndex + 1; i < itemsSourceView.Count(); i++)
+        {
+            if (auto const nextElement = ir.TryGetElement(i).try_as<winrt::NavigationViewItem>())
+            {
+                SetFocus(nextElement, winrt::FocusState::Programmatic);
+                return true;
+            }
+        }
+    }
+    return false;
+}
+
+bool NavigationView::FocusPreviousFocusableElement(const winrt::ItemsRepeater& ir, const int elementIndex)
+{
+    if (auto itemsSourceView = ir.ItemsSourceView())
+    {
+        for (int i = elementIndex - 1; i >= 0; i--)
+        {
+            if (auto const nextElement = ir.TryGetElement(i).try_as<winrt::NavigationViewItem>())
+            {
+                SetFocus(nextElement, winrt::FocusState::Programmatic);
+                // TODO: Figure out how to scroll to newly focused item
+                return true;
+            }
+        }
+    }
+    return false;
 }
 
 void NavigationView::HandleKeyEventForNavigationViewItem(const winrt::NavigationViewItem& nvi, const winrt::KeyRoutedEventArgs& args)
 {
     auto key = args.Key();
+    auto const isSettingsItem = IsSettingsItem(nvi);
 
     // Need to Polyfill XY navigation behavior when running RS3 and below
-    if (!SharedHelpers::IsRS4OrHigher())
+    if (!SharedHelpers::IsRS4OrHigher() && !isSettingsItem)
     {
         ArrowKeyNavigationPolyfill(nvi, args);
     }
-    else if (IsSettingsItem(nvi))
+
+
+    if (isSettingsItem)
     {
         // Because ListViewItem eats the events, we only get these keys on KeyDown.
         if (key == winrt::VirtualKey::Space ||
@@ -1882,10 +1944,8 @@ void NavigationView::KeyboardFocusLastItemFromItem(const winrt::NavigationViewIt
         auto lastIndex = itemsSourceView.Count() - 1;
         if (auto lastElement = ir.TryGetElement(lastIndex))
         {
-            if (auto controlLast = lastElement.try_as<winrt::Control>())
-            {
-                controlLast.Focus(winrt::FocusState::Programmatic);
-            }
+            SetFocus(lastElement, winrt::FocusState::Programmatic);
+            //controlLast.Focus(winrt::FocusState::Programmatic);
         }
     }
 }
