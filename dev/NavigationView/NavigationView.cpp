@@ -1855,8 +1855,8 @@ void NavigationView::HandleKeyEventForNavigationViewItem(const winrt::Navigation
     auto key = args.Key();
     auto const isSettingsItem = IsSettingsItem(nvi);
 
-    // Need to Polyfill XY navigation behavior when running RS3 and below
-    if (!SharedHelpers::IsRS4OrHigher() && !isSettingsItem)
+    // Need to Polyfill XY navigation behavior when running below RS3
+    if (!SharedHelpers::IsRS3OrHigher() && !isSettingsItem)
     {
         ArrowKeyNavigationPolyfill(nvi, args);
     }
