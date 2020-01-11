@@ -115,6 +115,7 @@ private:
     bool IsSettingsItem(winrt::IInspectable const& item);
     void HandleKeyEventForNavigationViewItem(const winrt::NavigationViewItem& nvi, const winrt::KeyRoutedEventArgs& args);
     void ArrowKeyNavigationPolyfill(const winrt::NavigationViewItem& nvi, const winrt::KeyRoutedEventArgs& args);
+    void TabKeyNavigationPolyfill(const winrt::NavigationViewItem& nvi, const winrt::KeyRoutedEventArgs& args);
     bool FocusNextFocusableElement(const winrt::ItemsRepeater& ir, const int elementIndex);
     bool FocusPreviousFocusableElement(const winrt::ItemsRepeater& ir, const int elementIndex);
 

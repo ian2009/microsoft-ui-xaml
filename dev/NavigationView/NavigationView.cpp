@@ -1818,6 +1818,45 @@ void NavigationView::ArrowKeyNavigationPolyfill(const winrt::NavigationViewItem&
     }
 }
 
+void NavigationView::TabKeyNavigationPolyfill(const winrt::NavigationViewItem& nvi, const winrt::KeyRoutedEventArgs& args)
+{
+    switch (args.Key())
+    {
+    case winrt::VirtualKey::Tab:
+        if (auto const ir = GetParentItemsRepeaterForContainer(nvi))
+        {
+            if (ir != m_topNavRepeater.get())
+            {
+                auto const indexOfCurrentElement = GetIndexFromItem(ir, nvi);
+                if (indexOfCurrentElement >= 0)
+                {
+                    if (FocusNextFocusableElement(ir, indexOfCurrentElement))
+                    {
+                        args.Handled(true);
+                    }
+                }
+            }
+        }
+        break;
+    case winrt::VirtualKey::Up:
+        //if (auto const ir = GetParentItemsRepeaterForContainer(nvi))
+        //{
+        //    if (ir != m_topNavRepeater.get())
+        //    {
+        //        auto const indexOfCurrentElement = GetIndexFromItem(ir, nvi);
+        //        if (indexOfCurrentElement >= 0)
+        //        {
+        //            if (FocusPreviousFocusableElement(ir, indexOfCurrentElement))
+        //            {
+        //                args.Handled(true);
+        //            }
+        //        }
+        //    }
+        //}
+        break;
+    }
+}
+
 bool NavigationView::FocusNextFocusableElement(const winrt::ItemsRepeater& ir, const int elementIndex)
 {
     if (auto itemsSourceView = ir.ItemsSourceView())
